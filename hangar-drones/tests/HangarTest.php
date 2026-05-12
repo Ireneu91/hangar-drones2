@@ -97,5 +97,30 @@ final class HangarTest extends TestCase
         $hangar->addDrone(new Drone('DR-107', 0, Drone::STATUS_MAINTENANCE));
     }
 
+    
+    public function testLaunchDroneFromDocked(): void
+    {
+        $hangar = new Hangar(3);
+        $hangar->addDrone(new Drone('DR-108'));
+        $hangar->addDrone(new Drone('DR-109'));
+
+        $launched = $hangar->launchDrone();
+
+        $this->assertSame('DR-108', $launched->id());
+        $this->assertSame(Drone::STATUS_IN_FLIGHT, $launched->status());
+        $this->assertSame(1, $hangar->inFlightCount());
+        $this->assertSame(['DR-109'], $hangar->dockedDroneIds());
+    }
+
+    public function testLaunchDroneThrowsWhenNoDocked(): void
+    {
+        $hangar = new Hangar(2);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('No drones docked');
+
+        $hangar->launchDrone();
+    }
+
 
 }
