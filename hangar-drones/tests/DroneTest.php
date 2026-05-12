@@ -169,5 +169,20 @@ final class DroneTest extends TestCase
         $drone->addFlightMinutes(-5);
     }
 
+    
+    public function testInvalidConstructorArgumentsThrow(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Drone('');
+    }
+
+    public function testInvalidStatusThrowsException(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('invalid status');
+
+        new Drone('DR-016', 0, 'flying');
+    }
 
 }
