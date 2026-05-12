@@ -36,5 +36,57 @@ final class DroneTest extends TestCase
         $this->assertTrue($drone->isInMaintenance());
     }
 
+    public function testTakeOffFromDockedChangesStatus(): void
+    {
+        $drone = new Drone('DR-003');
+
+        $drone->takeOff();
+
+        $this->assertSame(Drone::STATUS_IN_FLIGHT, $drone->status());
+        $this->assertTrue($drone->isInFlight());
+    }
+
+    public function testMarkDockedFromInFlightChangesStatus(): void
+    {
+        $drone = new Drone('DR-004');
+        $drone->takeOff();
+
+        $drone->markDocked();
+
+        $this->assertSame(Drone::STATUS_DOCKED, $drone->status());
+        $this->assertTrue($drone->isDocked());
+    }
+
+    public function testSendToMaintenanceFromDockedChangesStatus(): void
+    {
+        $drone = new Drone('DR-005');
+
+        $drone->sendToMaintenance();
+
+        $this->assertSame(Drone::STATUS_MAINTENANCE, $drone->status());
+        $this->assertTrue($drone->isInMaintenance());
+    }
+
+    
+    public function testReturnFromMaintenanceMovesBackToDocked(): void
+    {
+        $drone = new Drone('DR-006', 0, Drone::STATUS_MAINTENANCE);
+
+        $drone->returnFromMaintenance();
+
+        $this->assertSame(Drone::STATUS_DOCKED, $drone->status());
+        $this->assertTrue($drone->isDocked());
+    }
+
+    public function testRetireFromMaintenanceChangesStatus(): void
+    {
+        $drone = new Drone('DR-007', 0, Drone::STATUS_MAINTENANCE);
+
+        $drone->retire();
+
+        $this->assertSame(Drone::STATUS_RETIRED, $drone->status());
+        $this->assertTrue($drone->isRetired());
+    }
+
 
 }
