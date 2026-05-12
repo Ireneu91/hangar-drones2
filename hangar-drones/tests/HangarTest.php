@@ -122,5 +122,47 @@ final class HangarTest extends TestCase
         $hangar->launchDrone();
     }
 
+    public function testLandDroneAddsFlightMinutesAndMovesToMaintenance(): void
+    {
+        $hangar = new Hangar(3);
+        $drone = new Drone('DR-110');
+        $hangar->addDrone($drone);
+        $launched = $hangar->launchDrone();
+
+        $hangar->landDrone($launched, 25);
+
+        $this->assertSame(25, $launched->flightMinutes());
+        $this->assertSame(Drone::STATUS_MAINTENANCE, $launched->status());
+        $this->assertSame(0, $hangar->inFlightCount());
+        $this->assertSame(1, $hangar->maintenanceCount());
+        $this->assertSame(['DR-110'], $hangar->maintenanceDroneIds());
+    }
+
+    public function testLandDroneThrowsForNegativeFlightMinutes(): void
+    {
+        $hangar = new Hangar(2);
+        $drone = new Drone('DR-111');
+        $hangar->addDrone($drone);
+        $launched = $hangar->launchDrone();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('flightMinutes must be >= 0');
+
+        $hangar->landDrone($launched, -1);
+    }
+
+    public function testLandDroneThrowsWhenDroneNotInFlightFromThisHangar(): void
+    {
+        $hangar = new Hangar(2);
+        $drone = new Drone('DR-112');
+        $drone->takeOff();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Drone DR-112 is not in flight from this hangar');
+
+        $hangar->landDrone($drone, 10);
+    }
+
+
 
 }
