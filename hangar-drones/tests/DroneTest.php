@@ -139,6 +139,35 @@ final class DroneTest extends TestCase
         $drone->retire();
     }
 
+    public function testAddFlightMinutesWhileInFlight(): void
+    {
+        $drone = new Drone('DR-013');
+        $drone->takeOff();
+
+        $drone->addFlightMinutes(45);
+
+        $this->assertSame(45, $drone->flightMinutes());
+    }
+
+    public function testCannotAddFlightMinutesWhenNotInFlight(): void
+    {
+        $drone = new Drone('DR-014');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('is not in flight');
+
+        $drone->addFlightMinutes(10);
+    }
+
+    public function testCannotAddNegativeFlightMinutes(): void
+    {
+        $drone = new Drone('DR-015');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('flightMinutes must be >= 0');
+
+        $drone->addFlightMinutes(-5);
+    }
 
 
 }
