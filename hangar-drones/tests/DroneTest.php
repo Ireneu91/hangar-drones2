@@ -118,5 +118,27 @@ final class DroneTest extends TestCase
         $drone->sendToMaintenance();
     }
 
+    
+    public function testCannotReturnFromMaintenanceWhenNotInMaintenance(): void
+    {
+        $drone = new Drone('DR-011');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('is not in maintenance');
+
+        $drone->returnFromMaintenance();
+    }
+
+        public function testCannotRetireWhenNotInMaintenance(): void
+    {
+        $drone = new Drone('DR-012');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('cannot be retired');
+
+        $drone->retire();
+    }
+
+
 
 }
