@@ -88,5 +88,35 @@ final class DroneTest extends TestCase
         $this->assertTrue($drone->isRetired());
     }
 
+    public function testCannotTakeOffWhenNotDocked(): void
+    {
+        $drone = new Drone('DR-008', 0, Drone::STATUS_MAINTENANCE);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('cannot take off');
+
+        $drone->takeOff();
+    }
+
+    public function testCannotMarkDockedWhenNotInFlight(): void
+    {
+        $drone = new Drone('DR-009');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('cannot be set to docked');
+
+        $drone->markDocked();
+    }
+
+    public function testCannotSendToMaintenanceWhenNotDocked(): void
+    {
+        $drone = new Drone('DR-010', 0, Drone::STATUS_IN_FLIGHT);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('cannot enter maintenance');
+
+        $drone->sendToMaintenance();
+    }
+
 
 }
