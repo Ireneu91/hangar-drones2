@@ -28,4 +28,29 @@ final class HangarTest extends TestCase
 
         new Hangar(0);
     }
+
+    public function testAddDockedDroneStoresDrone(): void
+    {
+        $hangar = new Hangar(2);
+        $drone = new Drone('DR-101');
+
+        $hangar->addDrone($drone);
+
+        $this->assertSame(1, $hangar->dockedCount());
+        $this->assertSame(['DR-101'], $hangar->dockedDroneIds());
+        $this->assertTrue($hangar->hasFreeSlot());
+    }
+
+    public function testAddMaintenanceDroneStoresDrone(): void
+    {
+        $hangar = new Hangar(2);
+        $drone = new Drone('DR-102', 0, Drone::STATUS_MAINTENANCE);
+
+        $hangar->addDrone($drone);
+
+        $this->assertSame(1, $hangar->maintenanceCount());
+        $this->assertSame(['DR-102'], $hangar->maintenanceDroneIds());
+        $this->assertTrue($hangar->hasFreeSlot());
+    }
+
 }
